@@ -51,8 +51,8 @@ ExternalProject_Add(
         -DCMAKE_INSTALL_PREFIX=${QtBase_INSTALL_DIR}
         -DCMAKE_BUILD_TYPE=Release
         -DFEATURE_pkg_config=ON
-        -DQT_BUILD_EXAMPLES=OFF
-        -DQT_BUILD_TESTS=OFF
+        -DQT_BUILD_EXAMPLES=OFF                # Disable examples
+        -DQT_BUILD_TESTS=OFF                   # Disable tests
     BUILD_COMMAND cmake --build . --parallel ${NUM_PROCESSORS}
     INSTALL_COMMAND cmake --install .
     BUILD_BYPRODUCTS ${QtBase_INSTALL_DIR}/lib/cmake/Qt5/Qt5Config.cmake
@@ -66,6 +66,7 @@ ExternalProject_Add(
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${OpenBLAS_INSTALL_DIR}
         -DCMAKE_BUILD_TYPE=Release
+        -DBUILD_TESTING=OFF                    # If applicable, disable tests
     BUILD_COMMAND make -j${NUM_PROCESSORS}
     INSTALL_COMMAND make install
 )
@@ -78,6 +79,7 @@ ExternalProject_Add(
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${OpenMP_INSTALL_DIR}
         -DCMAKE_BUILD_TYPE=Release
+        -DLLVM_ENABLE_TESTS=OFF                # Disable LLVM tests (specific to OpenMP build system)
     BUILD_COMMAND cmake --build . --parallel ${NUM_PROCESSORS}
     INSTALL_COMMAND cmake --install .
 )
@@ -91,6 +93,7 @@ if(WIN32 OR (UNIX AND NOT APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"))
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${CudaSamples_INSTALL_DIR}
             -DCMAKE_BUILD_TYPE=Release
+            -DBUILD_TESTING=OFF                # Disable tests if CUDA Samples support this option
         BUILD_COMMAND cmake --build . --parallel ${NUM_PROCESSORS}
         INSTALL_COMMAND cmake --install .
     )

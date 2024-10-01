@@ -115,29 +115,6 @@ else()
     message(STATUS "OpenMP found in the system, using it.")
 endif()
 
-# Add CUDA Samples as an ExternalProject only if on supported platforms
-if(WIN32 OR (UNIX AND NOT APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"))
-    if(NOT EXISTS "${CudaSamples_SOURCE_DIR}")
-        message(STATUS "CUDA Samples not found, building from source.")
-        set(CudaSamples_NEEDS_BUILD TRUE)
-        ExternalProject_Add(
-            cuda_samples_project
-            PREFIX ${CMAKE_BINARY_DIR}/cuda_samples_build
-            SOURCE_DIR ${CudaSamples_SOURCE_DIR}
-            CMAKE_ARGS
-                -DCMAKE_INSTALL_PREFIX=${CudaSamples_INSTALL_DIR}
-                -DCMAKE_BUILD_TYPE=Release
-                -DBUILD_TESTING=OFF
-            BUILD_COMMAND cmake --build . --parallel ${NUM_PROCESSORS}
-            INSTALL_COMMAND cmake --install .
-        )
-        list(APPEND ADDITIONAL_INCLUDES "${CudaSamples_INSTALL_DIR}/include")
-        list(APPEND ADDITIONAL_LIB_DIRS "${CudaSamples_INSTALL_DIR}/lib")
-    else()
-        message(STATUS "CUDA Samples found, using the existing sources.")
-    endif()
-endif()
-
 # Add the executable linpack
 add_executable(linpack
     src/main.cpp
@@ -149,11 +126,11 @@ add_executable(linpack
 if(APPLE)
     target_sources(linpack PRIVATE src/gpu/metal_osx/linpack_gpu.mm)
     set_source_files_properties(src/gpu/metal_osx/linpack_gpu.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
-    # Найти Metal framework
-    find_library(METAL_FRAMEWORK Metal)
-    find_library(FOUNDATION_FRAMEWORK Foundation)
-    find_library(COREFRAMEWORK CoreFoundation)
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${METAL_FRAMEWORK} ${FOUNDATION_FRAMEWORK} ${COREFRAMEWORK})
+    # Find Metal and Foundation frameworks
+    find_library(METAL_FRAMEWORK Metal REQUIRED)
+    find_library(FOUNDATION_FRAMEWORK Foundation REQUIRED)
+    find_library(COCOA_FRAMEWORK Cocoa REQUIRED)
+    set(EXTRA_LIBS ${METAL_FRAMEWORK} ${FOUNDATION_FRAMEWORK} ${COCOA_FRAMEWORK})
 elseif(WIN32 OR (UNIX AND NOT APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"))
     enable_language(CUDA)
     target_sources(linpack PRIVATE
@@ -162,8 +139,12 @@ elseif(WIN32 OR (UNIX AND NOT APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"
     )
 endif()
 
-# Include directories for dependencies
+# Add the .ui file to the target sources to trigger the Qt UIC
+target_sources(linpack PRIVATE src/mainwindow.ui)
+
+# Include directories for dependencies and generated files
 include_directories(${ADDITIONAL_INCLUDES})
+include_directories(${CMAKE_BINARY_DIR}) # Include the directory for generated files like ui_mainwindow.h
 
 # Link directories for dependencies
 link_directories(${ADDITIONAL_LIB_DIRS})
@@ -172,10 +153,8 @@ link_directories(${ADDITIONAL_LIB_DIRS})
 target_link_libraries(linpack Qt5::Widgets Qt5::Charts)
 
 if(APPLE)
-    find_library(ACCELERATE_LIBRARY Accelerate)
-    if(ACCELERATE_LIBRARY)
-        target_link_libraries(linpack ${ACCELERATE_LIBRARY} ${EXTRA_LIBS})
-    endif()
+    find_library(ACCELERATE_LIBRARY Accelerate REQUIRED)
+    target_link_libraries(linpack ${ACCELERATE_LIBRARY} ${EXTRA_LIBS})
 else()
     target_link_libraries(linpack ${OPENBLAS_LIB} OpenMP::OpenMP_CXX)
 endif()
@@ -191,8 +170,4 @@ endif()
 
 if(OpenMP_NEEDS_BUILD)
     add_dependencies(linpack openmp_project)
-endif()
-
-if(CudaSamples_NEEDS_BUILD)
-    add_dependencies(linpack cuda_samples_project)
 endif()

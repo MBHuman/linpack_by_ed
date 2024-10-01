@@ -9,65 +9,65 @@ on:
       - main
 
 jobs:
-  build-linux:
-    name: Build on Linux
-    runs-on: ubuntu-latest
-    env:
-      NUM_PROCESSORS: ${{ github.runner.cores }}
+  # build-linux:
+  #   name: Build on Linux
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     NUM_PROCESSORS: ${{ github.runner.cores }}
 
-    steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive  # This line makes sure all submodules are cloned
+  #   steps:
+  #   - name: Checkout the repository
+  #     uses: actions/checkout@v3
+  #     with:
+  #       submodules: recursive  # This line makes sure all submodules are cloned
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential cmake gnupg2
+  #   - name: Install Dependencies
+  #     run: |
+  #       sudo apt-get update
+  #       sudo apt-get install -y build-essential cmake gnupg2
 
-        # Add NVIDIA package repositories
-        distribution=$(. /etc/os-release; echo $ID$VERSION_ID)
-        sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${distribution}/x86_64/3bf863cc.pub
-        echo "deb https://developer.download.nvidia.com/compute/cuda/repos/${distribution}/x86_64 /" | sudo tee /etc/apt/sources.list.d/cuda.list
-        sudo apt-get update
+  #       # Add NVIDIA package repositories
+  #       distribution=$(. /etc/os-release; echo $ID$VERSION_ID)
+  #       sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${distribution}/x86_64/3bf863cc.pub
+  #       echo "deb https://developer.download.nvidia.com/compute/cuda/repos/${distribution}/x86_64 /" | sudo tee /etc/apt/sources.list.d/cuda.list
+  #       sudo apt-get update
 
-        # Install CUDA toolkit
-        sudo apt-get install -y cuda
+  #       # Install CUDA toolkit
+  #       sudo apt-get install -y cuda
 
-    - name: Configure and Build
-      run: |
-        export PATH=/usr/local/cuda/bin:$PATH
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --parallel ${{ env.NUM_PROCESSORS }}
+  #   - name: Configure and Build
+  #     run: |
+  #       export PATH=/usr/local/cuda/bin:$PATH
+  #       mkdir build
+  #       cd build
+  #       cmake .. -DCMAKE_BUILD_TYPE=Release
+  #       cmake --build . --parallel ${{ env.NUM_PROCESSORS }}
 
-  build-windows:
-    name: Build on Windows
-    runs-on: windows-latest
-    env:
-      NUM_PROCESSORS: ${{ github.runner.cores }}
+  # build-windows:
+  #   name: Build on Windows
+  #   runs-on: windows-latest
+  #   env:
+  #     NUM_PROCESSORS: ${{ github.runner.cores }}
 
-    steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive  # This line makes sure all submodules are cloned
+  #   steps:
+  #   - name: Checkout the repository
+  #     uses: actions/checkout@v3
+  #     with:
+  #       submodules: recursive  # This line makes sure all submodules are cloned
 
-    - name: Install Dependencies
-      run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-        # Install CUDA
-        choco install cuda -y
+  #   - name: Install Dependencies
+  #     run: |
+  #       choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+  #       # Install CUDA
+  #       choco install cuda -y
 
-    - name: Configure and Build
-      run: |
-        set PATH="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\bin";%PATH%
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --parallel %NUM_PROCESSORS%
+  #   - name: Configure and Build
+  #     run: |
+  #       set PATH="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\bin";%PATH%
+  #       mkdir build
+  #       cd build
+  #       cmake .. -DCMAKE_BUILD_TYPE=Release
+  #       cmake --build . --parallel %NUM_PROCESSORS%
 
   build-macos:
     name: Build on macOS
@@ -84,7 +84,7 @@ jobs:
     - name: Install Dependencies
       run: |
         brew update
-        brew install cmake qt@5 openblas llvm
+        brew install cmake qt openblas llvm
         
     - name: Configure and Build
       run: |

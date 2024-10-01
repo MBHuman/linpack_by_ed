@@ -84,7 +84,7 @@ jobs:
     - name: Install Dependencies
       run: |
         brew update
-        brew install cmake qt openblas llvm
+        brew install cmake qt@5 openblas llvm
         
     - name: Configure and Build
       run: |

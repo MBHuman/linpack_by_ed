@@ -18,6 +18,8 @@ jobs:
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v3
+      with:
+        submodules: recursive  # This line makes sure all submodules are cloned
 
     - name: Install Dependencies
       run: |
@@ -47,6 +49,8 @@ jobs:
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v3
+      with:
+        submodules: recursive  # This line makes sure all submodules are cloned
 
     - name: Install Dependencies
       run: |
@@ -73,6 +77,8 @@ jobs:
     steps:
     - name: Checkout the repository
       uses: actions/checkout@v3
+      with:
+        submodules: recursive  # This line makes sure all submodules are cloned
 
     - name: Install Dependencies
       run: |

@@ -27,7 +27,7 @@ if(NOT NUM_PROCESSORS OR NUM_PROCESSORS EQUAL 0)
 endif()
 
 # Add verbose output for debugging
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Paths for building dependencies from the repository submodules
 set(QtBase_SOURCE_DIR "${CMAKE_SOURCE_DIR}/external/qtbase")

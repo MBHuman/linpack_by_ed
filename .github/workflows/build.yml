@@ -24,7 +24,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake libopenblas-dev libomp-dev qtbase5-dev
+        sudo apt-get install -y build-essential cmake
         # Install CUDA
         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-repo-ubuntu2004_11.5.2-1_amd64.deb
         sudo dpkg -i cuda-repo-ubuntu2004_11.5.2-1_amd64.deb
@@ -55,8 +55,6 @@ jobs:
     - name: Install Dependencies
       run: |
         choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-        choco install openblas -y
-        choco install qt5-sdk -y
         # Install CUDA
         choco install cuda -y
 
@@ -83,7 +81,7 @@ jobs:
     - name: Install Dependencies
       run: |
         brew update
-        brew install cmake openblas llvm qt
+        brew install cmake
 
     - name: Configure and Build
       run: |

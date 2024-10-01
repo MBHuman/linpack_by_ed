@@ -1,0 +1,12 @@
+[submodule "external/qtbase"]
+	path = external/qtbase
+	url = https://github.com/qt/qtbase.git
+[submodule "external/llvm-project"]
+	path = external/llvm-project
+	url = https://github.com/llvm/llvm-project.git
+[submodule "external/openblas"]
+	path = external/openblas
+	url = https://github.com/xianyi/OpenBLAS.git
+[submodule "external/cuda-samples"]
+	path = external/cuda-samples
+	url = https://github.com/NVIDIA/cuda-samples.git

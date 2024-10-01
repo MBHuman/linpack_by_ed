@@ -1,0 +1,87 @@
+name: CI Build Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-linux:
+    name: Build on Linux
+    runs-on: ubuntu-latest
+    env:
+      NUM_PROCESSORS: ${{ github.runner.cores }}
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake libopenblas-dev libomp-dev qtbase5-dev
+        # Install CUDA
+        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-repo-ubuntu2004_11.5.2-1_amd64.deb
+        sudo dpkg -i cuda-repo-ubuntu2004_11.5.2-1_amd64.deb
+        sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+        sudo apt-get update
+        sudo apt-get install -y cuda
+
+    - name: Configure and Build
+      run: |
+        export PATH=/usr/local/cuda/bin:$PATH
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --parallel ${{ env.NUM_PROCESSORS }}
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    env:
+      NUM_PROCESSORS: ${{ github.runner.cores }}
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+        choco install openblas -y
+        choco install qt5-sdk -y
+        # Install CUDA
+        choco install cuda -y
+
+    - name: Configure and Build
+      run: |
+        set PATH="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\bin";%PATH%
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --parallel %NUM_PROCESSORS%
+
+  build-macos:
+    name: Build on macOS
+    runs-on: macos-latest
+    env:
+      NUM_PROCESSORS: ${{ github.runner.cores }}
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        brew update
+        brew install cmake openblas llvm qt
+
+    - name: Configure and Build
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --parallel ${{ env.NUM_PROCESSORS }}

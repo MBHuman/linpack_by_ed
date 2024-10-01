@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Linpack Performance Monitor</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+    * {
+        background-color: #1e1e1e;
+        color: #e8e8e8;
+    }
+    QPushButton {
+        background-color: #3a3a3a;
+        color: #ffffff;
+        border-radius: 8px;
+        padding: 8px 16px;
+    }
+    QPushButton:hover {
+        background-color: #555555;
+    }
+    QProgressBar {
+        border: 2px solid #3a3a3a;
+        border-radius: 5px;
+        background: #2e2e2e;
+        text-align: center;
+    }
+    QProgressBar::chunk {
+        background-color: #00bfa5;
+        width: 20px;
+    }
+    QLabel {
+        font-size: 14px;
+        padding: 5px;
+    }
+    QTableWidget {
+        background-color: #2e2e2e;
+        border: 1px solid #3a3a3a;
+    }
+    QHeaderView::section {
+        background-color: #3a3a3a;
+        color: #e8e8e8;
+        padding: 4px;
+    }
+   </string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="mainLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
+      
+      <!-- LAPACK Вкладка -->
+      <widget class="QWidget" name="lapackTab">
+       <attribute name="title">
+        <string>LAPACK</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="lapackLayout">
+        <item>
+         <widget class="QSplitter" name="lapackSplitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QWidget" name="lapackChartAndTableWidget" native="true">
+           <layout class="QVBoxLayout" name="lapackChartAndTableLayout">
+            <item>
+             <widget class="QChartView" name="lapackChartView">
+              <property name="minimumSize">
+               <size>
+                <width>600</width>
+                <height>400</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTableWidget" name="lapackHistoryTable">
+              <property name="rowCount">
+               <number>0</number>
+              </property>
+              <property name="columnCount">
+               <number>3</number>
+              </property>
+              <property name="horizontalHeaderLabels">
+               <stringlist>
+                <string>Дата</string>
+                <string>Размер Матрицы</string>
+                <string>Производительность (GFLOPS)</string>
+               </stringlist>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="lapackControlWidget" native="true">
+           <layout class="QVBoxLayout" name="lapackRightPanelLayout">
+            <property name="spacing">
+             <number>15</number>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignTop</set>
+            </property>
+            <item>
+             <widget class="QLabel" name="lapackPerformanceLabel">
+              <property name="text">
+               <string>Оценочная производительность: 0 GFLOPS</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lapackParrotsLabel">
+              <property name="text">
+               <string>Количество попугаев: 0</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="startLapackButton">
+              <property name="text">
+               <string>Запуск теста</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="lapackProgressBar">
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="lapackClearButton">
+              <property name="text">
+               <string>Очистить график</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="lapackSaveButton">
+              <property name="text">
+               <string>Сохранить результаты</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="lapackLoadButton">
+              <property name="text">
+               <string>Загрузить результаты</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="lapackManualEntryButton">
+              <property name="text">
+               <string>Добавить запись</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- Metal (GPU) Вкладка -->
+      <widget class="QWidget" name="gpuTab">
+       <attribute name="title">
+        <string>Metal (GPU)</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="gpuLayout">
+        <item>
+         <widget class="QSplitter" name="gpuSplitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QWidget" name="gpuChartAndTableWidget" native="true">
+           <layout class="QVBoxLayout" name="gpuChartAndTableLayout">
+            <item>
+             <widget class="QChartView" name="gpuChartView">
+              <property name="minimumSize">
+               <size>
+                <width>600</width>
+                <height>400</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTableWidget" name="gpuHistoryTable">
+              <property name="rowCount">
+               <number>0</number>
+              </property>
+              <property name="columnCount">
+               <number>3</number>
+              </property>
+              <property name="horizontalHeaderLabels">
+               <stringlist>
+                <string>Дата</string>
+                <string>Размер Матрицы</string>
+                <string>Производительность (GFLOPS)</string>
+               </stringlist>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="gpuControlWidget" native="true">
+           <layout class="QVBoxLayout" name="gpuRightPanelLayout">
+            <property name="spacing">
+             <number>15</number>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignTop</set>
+            </property>
+            <item>
+             <widget class="QLabel" name="gpuPerformanceLabel">
+              <property name="text">
+               <string>Оценочная производительность (GPU): 0 GFLOPS</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="gpuParrotsLabel">
+              <property name="text">
+               <string>Количество попугаев: 0</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="startGpuButton">
+              <property name="text">
+               <string>Запуск теста Metal (GPU)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="gpuProgressBar">
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="gpuClearButton">
+              <property name="text">
+               <string>Очистить график</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="gpuSaveButton">
+              <property name="text">
+               <string>Сохранить результаты</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="gpuLoadButton">
+              <property name="text">
+               <string>Загрузить результаты</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="gpuManualEntryButton">
+              <property name="text">
+               <string>Добавить запись</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

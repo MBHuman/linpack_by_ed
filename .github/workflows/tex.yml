@@ -1,0 +1,62 @@
+name: Build PDF and create task release
+
+on:
+  push:
+    branches:
+      - main  # Запуск только при изменениях в ветке main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Filter changes
+        id: filter_changes
+        uses: dorny/paths-filter@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            task:
+              - 'task.tex'
+
+      - name: Set up LaTeX environment
+        if: steps.filter_changes.outputs.task  # This condition ensures that LaTeX is only installed if the target directory is set
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-base texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra texlive-lang-cyrillic texlive-pictures texlive-science latexmk
+
+      - name: Compile LaTeX document with latexmk
+        if: steps.filter_changes.outputs.task  # This condition ensures that the compilation only occurs if the target directory is set
+        run: |
+          latexmk -pdf task.tex
+
+      - name: Check if PDF was generated
+        id: check_pdf
+        if: env.target_dir  # This condition ensures the check only occurs if the target directory is set
+        run: |
+          if [ -f "task.pdf" ]; then
+            echo "PDF exists."
+            echo "pdf_exists=true" >> $GITHUB_ENV
+          else
+            echo "PDF does not exist."
+            echo "pdf_exists=false" >> $GITHUB_ENV
+          fi
+
+      - name: Upload PDF as artifact
+        if: env.pdf_exists == 'true'  # Only run if PDF exists
+        uses: actions/upload-artifact@v3
+        with:
+          name: task-pdf
+          path: task.pdf
+
+      - name: Create GitHub release
+        if: env.pdf_exists == 'true'  # Only run if PDF exists
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.target_dir_underscore }}-release
+          name: 'Task Release'
+          files: task.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
